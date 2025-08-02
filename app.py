@@ -1,6 +1,8 @@
 from flask import Flask, request, render_template_string
 import pandas as pd
 import re
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.serving import run_simple
 
 app = Flask(__name__)
 df = pd.read_csv("brands_data.csv", encoding="ISO-8859-1")
@@ -185,7 +187,10 @@ window.onclick = function(event) {
 </body>
 </html>
 """
-
 if __name__ == "__main__":
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    from werkzeug.middleware.dispatcher import DispatcherMiddleware
+    application = DispatcherMiddleware(Flask('dummy'), {
+        '/python_search': app
+    })
+    run_simple('0.0.0.0', 8000, application, use_reloader=True)
 
